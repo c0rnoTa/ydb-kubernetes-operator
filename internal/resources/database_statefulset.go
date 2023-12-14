@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net"
 	"regexp"
 	"strconv"
 
@@ -568,14 +569,21 @@ func (b *DatabaseStatefulSetBuilder) buildContainerArgs() ([]string, []string) {
 	publicHostOption := "--grpc-public-host"
 	publicPortOption := "--grpc-public-port"
 
+	host := fmt.Sprintf("%s.%s", "$(NODE_NAME)", b.Spec.Service.GRPC.ExternalHost)
+	port := strconv.Itoa(v1alpha1.GRPCPort)
+
+	if b.Spec.PublicHost != "" {
+		host, port, _ = net.SplitHostPort(b.Spec.PublicHost)
+	}
+
 	args = append(
 		args,
 
 		publicHostOption,
-		fmt.Sprintf("%s.%s", "$(NODE_NAME)", b.Spec.Service.GRPC.ExternalHost), // fixme $(NODE_NAME)
+		host,
 
 		publicPortOption,
-		strconv.Itoa(v1alpha1.GRPCPort),
+		port,
 	)
 
 	if value, ok := b.ObjectMeta.Annotations[v1alpha1.AnnotationDataCenter]; ok {
