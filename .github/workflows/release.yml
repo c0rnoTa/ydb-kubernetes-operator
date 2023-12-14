@@ -18,7 +18,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: ghcr.io/${{ github.repository_owner }}/cluster-issuer-regru
+          images: ghcr.io/${{ github.repository_owner }}/ydb-kubernetes-operator
           tags: |
             type=schedule
             type=ref,event=branch
